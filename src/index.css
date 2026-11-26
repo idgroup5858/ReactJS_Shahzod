@@ -1,0 +1,184 @@
+@import "tailwindcss";
+
+/* Ranglar: standart — to'q (asl sahifadagidek), telefon yorug' rejimda bo'lsa — yorug' */
+:root {
+  --bg: #070b14;
+  --surface: #0e1524;
+  --surface-2: #151e33;
+  --line: rgb(255 255 255 / 0.08);
+  --ink: #eef2fa;
+  --muted: #95a3bf;
+  --accent: #e60012;
+  --accent-2: #ff4d5a;
+  --glow: rgb(230 0 18 / 0.3);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f4f6fb;
+    --surface: #ffffff;
+    --surface-2: #eef2f8;
+    --line: rgb(15 26 48 / 0.09);
+    --ink: #0f1a30;
+    --muted: #5a6784;
+    --glow: rgb(230 0 18 / 0.16);
+    color-scheme: light;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@theme {
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-fade-in: fade-in 0.5s ease both;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-glow: glow 7s ease-in-out infinite;
+  --animate-ping-soft: ping-soft 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  --animate-pop: pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes glow {
+    0%, 100% { opacity: 0.75; scale: 1; }
+    50% { opacity: 1; scale: 1.08; }
+  }
+  @keyframes ping-soft {
+    0% { transform: scale(1); opacity: 0.6; }
+    80%, 100% { transform: scale(1.7); opacity: 0; }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+@utility bg-brand {
+  background-image: linear-gradient(135deg, var(--accent-2), var(--accent));
+}
+@utility text-brand {
+  background-image: linear-gradient(120deg, #ff5a66, var(--accent) 60%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@utility shadow-brand {
+  box-shadow: 0 12px 28px -10px rgb(230 0 18 / 0.6);
+}
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+button,
+a {
+  touch-action: manipulation;
+}
+
+/* Hero orqasidagi to'r */
+.hero-grid {
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 30%, transparent 75%);
+}
+
+/* Scroll bo'yicha paydo bo'lish (src/components/Reveal.jsx) */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition:
+    opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--d, 0ms);
+}
+[data-reveal="scale"] {
+  transform: scale(0.94);
+}
+[data-reveal="left"] {
+  transform: translate3d(-36px, 0, 0);
+}
+[data-reveal="right"] {
+  transform: translate3d(36px, 0, 0);
+}
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Sahifa tepasidagi scroll indikatori (qo'llab-quvvatlaydigan brauzerlarda) */
+.scroll-progress {
+  display: none;
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    display: block;
+    transform-origin: 0 50%;
+    animation: grow-x linear both;
+    animation-timeline: scroll(root);
+  }
+  @keyframes grow-x {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+}
+
+/* Skeleton */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 50%, var(--surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  [data-reveal] {
+    transform: none !important;
+    transition: opacity 0.3s;
+  }
+}
